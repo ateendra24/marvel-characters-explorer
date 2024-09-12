@@ -13,6 +13,8 @@ Welcome to **Marvel Characters Explorer**, a web application that lets you explo
 
 ![Marvel Character Grid](public/Marvel.png)
 ![Character Details](public/Marvel2.png)
+![Marvel Character Grid](public/Marvel3.png)
+
 
 ## Tech Stack
 

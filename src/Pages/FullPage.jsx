@@ -132,7 +132,7 @@ function FullPage() {
                                 {hero.series.available || "No Series available."}
                                 
 
-                                <div className='font-bold text-2xl'>SESTORIESRIES: <br /></div>
+                                <div className='font-bold text-2xl'>Stories: <br /></div>
                                 {hero.stories.available || "No Stories available."}
 
                             </div>
