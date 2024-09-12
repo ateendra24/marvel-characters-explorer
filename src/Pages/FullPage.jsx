@@ -3,13 +3,13 @@ import { Link, useParams } from 'react-router-dom';
 import CryptoJS from "crypto-js";
 
 function FullPage() {
-    const [hero, setHero] = useState(null); 
+    const [hero, setHero] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { id } = useParams(); 
-    const publicKey =  import.meta.env.VITE_MARVEL_PUBLICKEY;
-  const privateKey = import.meta.env.VITE_MARVEL_PRIVATEKEY;
+    const { id } = useParams();
+    const publicKey = import.meta.env.VITE_MARVEL_PUBLICKEY;
+    const privateKey = import.meta.env.VITE_MARVEL_PRIVATEKEY;
     const ts = new Date().getTime();
     const hash = CryptoJS.MD5(ts + privateKey + publicKey).toString();
     const apiUrl = `https://gateway.marvel.com/v1/public/characters/${id}?ts=${ts}&apikey=${publicKey}&hash=${hash}`;
@@ -18,7 +18,6 @@ function FullPage() {
         const fetchHero = async () => {
             try {
                 const response = await fetch(apiUrl);
-
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -26,7 +25,6 @@ function FullPage() {
                 const data = await response.json();
                 if (data.data.results.length > 0) {
                     setHero(data.data.results[0]);
-                    console.log(data.data.results[0])
                 } else {
                     setError("Hero not found.");
                 }
@@ -37,10 +35,8 @@ function FullPage() {
                 setLoading(false);
             }
         };
-
         fetchHero();
-    }, []);
-
+    }, [apiUrl]);
 
     if (error) {
         return <p className="text-center text-xl text-red-500">{error}</p>;
@@ -48,7 +44,7 @@ function FullPage() {
 
     return (
         <div className='bg-[#e3dede] h-[100dvh] w-full overflow-hidden'>
-            <Link to={'/'} className='fixed top-5 left-6 z-10 opacity-70 hover:opacity-100 '>
+            <Link to={'/'} className='fixed top-5 left-6 z-10 opacity-70 hover:opacity-100 hover:scale-110 transition-all duration-300'>
 
                 <svg width="42" height="36" viewBox="0 0 52 46" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g filter="url(#filter0_d_844_160)">
@@ -81,65 +77,96 @@ function FullPage() {
                     </defs>
                 </svg>
 
+
             </Link>
 
             <div className='relative h-[100dvh] flex flex-wrap'>
                 <div className='md:h-[100dvh] h-[40%] w-full md:w-1/2 flex justify-center items-center bg-gradient-to-br from-red-900 to-red-600 clip2'>
-
                     {loading ? (
-                        <div className=' w-full h-auto aspect-square bg-gray-300 animate-pulse rotate-90'></div>
+                        <div className='w-full h-auto aspect-square bg-gray-300 animate-pulse rotate-90'></div>
                     ) : (
-                        <img className=' w-[100%]' src={`${hero.thumbnail.path}.${hero.thumbnail.extension}`} alt={hero.name || "Unknown Hero"} />
+                        <img
+                            className='w-[100%] transform transition-transform duration-500 hover:scale-105'
+                            src={`${hero.thumbnail.path}.${hero.thumbnail.extension}`}
+                            alt={hero.name || "Unknown Hero"}
+                        />
                     )}
-
                 </div>
 
-                <div className='md:h-[100dvh] h-[60%] w-full md:w-1/2 flex justify-center items-center md:px-40 px-6'>
-                    <div className='text-left w-96'>
-                        {loading ? (<>
-                            <div className='text-xl font-bold animate-pulse bg-gray-300 h-8 w-44 mb-2'></div>
-                            <div className='text-xl font-bold animate-pulse bg-gray-300 h-6 w-44 mb-4'></div>
-                        </>
+                <div className='md:h-[100dvh] h-[60%] w-full md:w-1/2 flex justify-center md:px-10 py-4 px-6 overflow-y-scroll'>
+                    <div className='text-left w-full max-w-md'>
+                        {loading ? (
+                            <>
+                                <div className='text-xl font-bold animate-pulse bg-gray-300 h-8 w-40 mb-4'></div>
+                                <div className='text-xl font-bold animate-pulse bg-gray-300 h-6 w-40 mb-6'></div>
+                                {Array(6).fill(null).map((_, index) => (
+                                    <div key={index} className='animate-pulse bg-gray-300 h-6 w-full mb-4'></div>
+                                ))}
+                            </>
                         ) : (
                             <div className='text-xl'>
-                                <span className='font-bold text-2xl'>NAME: <br /></span>
-                                {hero.name || "Unknown Hero"}
+                                <div className='mb-4'>
+                                    <h2 className='font-bold text-3xl text-black'>NAME:</h2>
+                                    <p className='text-[#2d2d2d]'>{hero.name || "Unknown Hero"}</p>
+                                </div>
+
+                                <div className='mb-6'>
+                                    <h2 className='font-bold text-3xl text-black'>DESCRIPTION:</h2>
+                                    <p className='text-[#2d2d2d]'>
+                                        {hero.description ? hero.description : "No description available."}
+                                    </p>
+                                </div>
+
+                                <div className='mb-6'>
+                                    <h2 className='font-bold text-3xl text-black'>COMICS:</h2>
+                                    {hero.comics.available > 0 ? (
+                                        <ul className='list-disc pl-5'>
+                                            {hero.comics.items.slice(0, 5).map((comic, index) => (
+                                                <li key={index} className='text-[#2d2d2d]'>
+                                                    {comic.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className='text-[#2d2d2d]'>No comics available.</p>
+                                    )}
+                                </div>
+
+                                <div className='mb-6'>
+                                    <h2 className='font-bold text-3xl text-black'>SERIES:</h2>
+                                    {hero.series.available > 0 ? (
+                                        <ul className='list-disc pl-5'>
+                                            {hero.series.items.slice(0, 5).map((series, index) => (
+                                                <li key={index} className='text-[#2d2d2d]'>
+                                                    {series.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className='text-[#2d2d2d]'>No series available.</p>
+                                    )}
+                                </div>
+
+                                <div className='mb-6'>
+                                    <h2 className='font-bold text-3xl text-black'>STORIES:</h2>
+                                    {hero.stories.available > 0 ? (
+                                        <ul className='list-disc pl-5'>
+                                            {hero.stories.items.slice(0, 5).map((story, index) => (
+                                                <li key={index} className='text-[#2d2d2d]'>
+                                                    {story.name}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className='text-[#2d2d2d]'>No stories available.</p>
+                                    )}
+                                </div>
                             </div>
                         )}
-
-                        {loading ? (<>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-                            <div className='text-xl animate-pulse bg-gray-300 h-8 w-96 mb-2'></div>
-
-
-                        </>
-                        ) : (
-                            <div className='text-xl'>
-                                <div className='font-bold text-2xl'>DESCRIPTION: <br /></div>
-                                <span className='line-clamp-6'>{hero.description || "No description available."}</span>
-
-                                <div className='font-bold text-2xl'>COMICS: <br /></div>
-                                {hero.comics.available || "No Comics available."}
-
-                                
-                                <div className='font-bold text-2xl'>SERIES: <br /></div>
-                                {hero.series.available || "No Series available."}
-                                
-
-                                <div className='font-bold text-2xl'>Stories: <br /></div>
-                                {hero.stories.available || "No Stories available."}
-
-                            </div>
-                        )}
-
                     </div>
                 </div>
+
+
             </div>
         </div>
     );
