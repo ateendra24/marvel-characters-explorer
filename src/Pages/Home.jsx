@@ -69,7 +69,7 @@ function Home() {
             id="searchBox"
             onChange={(e) => setTemp(e.target.value)}
             onKeyDown={handleKeyPress} 
-            className='w-[350px] h-11 rounded-full mb-36 text-xl text-center bg-[#ffffff72] text-white border border-gray-300 py-1 focus:outline-none placeholder:text-[#ffffffb9]'
+            className='w-[350px] h-11 rounded-full mb-36 text-xl text-center bg-[#ffffff72] text-white border border-gray-300 py-1 focus:outline-none placeholder:text-[#ffffffb9] placeholder:text-lg'
             placeholder="Search character by name"
           />
           <button onClick={NameChange} className='absolute top-1 right-1 bg-[#252525] p-2 rounded-full'>
