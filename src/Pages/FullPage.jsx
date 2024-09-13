@@ -36,7 +36,7 @@ function FullPage() {
             }
         };
         fetchHero();
-    }, [apiUrl]);
+    }, []);
 
     if (error) {
         return <p className="text-center text-xl text-red-500">{error}</p>;
@@ -93,7 +93,7 @@ function FullPage() {
                     )}
                 </div>
 
-                <div className='md:h-[100dvh] h-[60%] w-full md:w-1/2 flex justify-center md:px-10 py-4 px-6 overflow-y-scroll'>
+                <div className='md:h-[100dvh] h-[60%] w-full md:w-1/2 flex justify-center md:px-10 py-8 px-6 overflow-y-scroll'>
                     <div className='text-left w-full max-w-md'>
                         {loading ? (
                             <>
